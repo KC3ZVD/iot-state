@@ -1,5 +1,5 @@
 from mongoengine import Document, StringField, EmbeddedDocument, EmbeddedDocumentListField, ReferenceField
-from iot_state import utility
+from kc3zvd.iot_state import utility
 
 class State(EmbeddedDocument):
   """Represents an IOT Device's state

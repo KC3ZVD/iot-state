@@ -5,6 +5,11 @@ path = "src/kc3zvd/iot_state/__about__.py"
 extra-dependencies = [
   "mypy>=1.0.0",
 ]
+
+[build.targets.wheel]
+sources = ["src"]
+packages = ["src/kc3zvd"]
+
 [envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:src/kc3zvd/iot_state tests}"
 

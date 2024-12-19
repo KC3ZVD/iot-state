@@ -1,4 +1,4 @@
-from kc3zvd.iot_state import devices
+import kc3zvd.iot_state.devices as devices
 
 def test_iot_state():
     device = devices.Device()
