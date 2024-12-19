@@ -20,8 +20,12 @@ jobs:
         run: pip install hatch
       - id: bump-version
         run: hatch version `hatch run bump-version`
-      - id: check-version
-        run: cat ./src/kc3zvd/iot_state/__about__.py
+      - id: generate-changelog
+        run: git-changelog -o CHANGELOG.md -c angular -B auto
+      - id: verify
+        run: cat CHANGELOG.md
+      - id: package-build
+        run: hatch build
     outputs:
       version: ${{ steps.bump-version.outputs.version }}
         
