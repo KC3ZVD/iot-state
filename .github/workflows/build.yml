@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up ci environment
+      - name: Set up environment
         uses: actions/setup-python@v4
         with:
           python-version: 3.12
@@ -18,7 +18,7 @@ jobs:
       - id: install-hatch
         run: pip install hatch
       - id: bump-version
-        run: echo '__version__ = "`hatch run ci:bump-version`"' >> ./src/kc3zvd/iot_state/__about__.py
+        run: echo "__version__ = `hatch run bump-version`" > ./src/kc3zvd/iot_state/__about__.py
       - id: check-version
         run: cat ./src/kc3zvd/iot_state/__about__.py
     outputs:
