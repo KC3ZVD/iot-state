@@ -18,7 +18,7 @@ jobs:
       - id: install-hatch
         run: pip install hatch
       - id: bump-version
-        run: echo "__version__ = `hatch run bump-version`" > ./src/kc3zvd/iot_state/__about__.py
+        run: hatch version `hatch run bump-version`
       - id: check-version
         run: cat ./src/kc3zvd/iot_state/__about__.py
     outputs:
