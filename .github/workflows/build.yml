@@ -18,4 +18,5 @@ jobs:
     steps:
       - env:
           NEW_VERSION: ${{ needs.version.outputs.new-version }}
-        run: echo "NEW VERSION: $NEW_VERSION"
+        run: echo "NEW VERSION -$NEW_VERSION"
+        
