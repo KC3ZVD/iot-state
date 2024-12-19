@@ -1,0 +1,19 @@
+[version]
+path = "src/iot_state/__about__.py"
+
+[envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+[envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/iot_state tests}"
+
+[envs.default.scripts]
+worker = "celery -A iot_state.workers.wled worker"
+listener = "python -m iot_state.listeners.wled"
+
+[envs.dev]
+
+[envs.dev.env-vars]
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+MONGODB_URL = 'mongodb://localhost/iot'

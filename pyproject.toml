@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "iot-state"
+dynamic = ["version"]
+description = ''
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "KC3ZVD", email = "github@kc3zvd.net" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "click",
+  "zeroconf",
+  "paho-mqtt",
+  "requests",
+  "semver",
+  "Celery[redis]",
+  "mongoengine"
+]
+
+[project.urls]
+Documentation = "https://github.com/kc3zvd/iot-state#readme"
+Issues = "https://github.com/kc3zvd/iot-state/issues"
+Source = "https://github.com/kc3zvd/iot-state"
+
+[project.scripts]
+iot-state = "iot_state.cli:iot_state"
+
+[tool.coverage.run]
+source_pkgs = ["iot_state", "tests"]
+branch = true
+parallel = true
+omit = [
+  "src/iot_state/__about__.py",
+]
+
+[tool.coverage.paths]
+iot_state = ["src/iot_state", "*/iot-state/src/iot_state"]
+tests = ["tests", "*/iot-state/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
