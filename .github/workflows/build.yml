@@ -8,6 +8,12 @@ jobs:
   version:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up ci environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
       - id: install-hatch
         run: pip install hatch
       - id: bump-version
