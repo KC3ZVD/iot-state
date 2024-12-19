@@ -1,15 +1,11 @@
 name: build
 
 on:
-  workflow_run:
-    workflows: ["test"]
+  push:
     branches: [ci]
-    types: 
-      - completed
 
 jobs:
   on-success:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - run: echo 'The test workflow passed'
