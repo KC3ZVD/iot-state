@@ -8,6 +8,8 @@ jobs:
   version:
     runs-on: ubuntu-latest
     steps:
+      - id: install-hatch
+        run: pip install hatch
       - id: bump-version
         run: echo "version=`hatch run ci:bump-version`" >> "$GITHUB_OUTPUT"
     outputs:
