@@ -12,6 +12,7 @@ dependencies = [
 
 [envs.default.scripts]
 bump-version = "python build/bump_version.py"
+generate-changelog = "git-changelog -o CHANGELOG.md -c angular -B auto"
 worker = "celery -A kc3zvd.iot_state.workers.wled worker"
 listener = "python -m kc3zvd.iot_state.listeners.wled"
 

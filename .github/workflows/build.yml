@@ -21,7 +21,7 @@ jobs:
       - id: bump-version
         run: hatch version `hatch run bump-version`
       - id: generate-changelog
-        run: git-changelog -o CHANGELOG.md -c angular -B auto
+        run: hatch run generate-changelog
       - id: verify
         run: cat CHANGELOG.md
       - id: package-build
