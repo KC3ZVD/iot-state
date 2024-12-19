@@ -18,6 +18,9 @@ jobs:
       - id: install-hatch
         run: pip install hatch
       - id: bump-version
-        run: export NEW_VERSION=`hatch run ci:bump-version`
-      - id: version-check
-        run: env
+        run: echo '__version__ = "`hatch run ci:bump-version`"' >> ./src/kc3zvd/iot_state/__about__.py
+      - id: check-version
+        run: cat ./src/kc3zvd/iot_state/__about__.py
+    outputs:
+      version: ${{ steps.bump-version.outputs.version }}
+        
