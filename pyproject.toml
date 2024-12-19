@@ -40,21 +40,22 @@ Issues = "https://github.com/kc3zvd/iot-state/issues"
 Source = "https://github.com/kc3zvd/iot-state"
 
 [project.scripts]
-iot-state = "iot_state.cli:iot_state"
+iot-state = "kc3zvd.iot_state.cli:iot_state"
 
 [tool.coverage.run]
-source_pkgs = ["iot_state", "tests"]
+source_pkgs = ["kc3zvd.iot_state", "tests"]
 branch = true
 parallel = true
 omit = [
-  "src/iot_state/__about__.py",
+  "src/kc3zvd/iot_state/__about__.py",
 ]
 
 [tool.coverage.paths]
-iot_state = ["src/iot_state", "*/iot-state/src/iot_state"]
+iot_state = ["src/kc3zvd/iot_state", "*/iot-state/src/kc3zvd/iot_state"]
 tests = ["tests", "*/iot-state/tests"]
 
 [tool.coverage.report]
+show_missing = true
 exclude_lines = [
   "no cov",
   "if __name__ == .__main__.:",
