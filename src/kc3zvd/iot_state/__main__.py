@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024-present KC3ZVD <github@kc3zvd.net>
 #
 # SPDX-License-Identifier: MIT
-import sys
+import sys  # pragma: no cover
 
 if __name__ == "__main__":
     from iot_state.cli import iot_state

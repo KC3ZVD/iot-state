@@ -1,4 +1,5 @@
-import kc3zvd.iot_state.utility as utility
+from kc3zvd.iot_state import utility
+
 
 def test_utility():
-    assert utility.normalize('TesT sTRiNg') == 'test_string'
+    assert utility.normalize("TesT sTRiNg") == "test_string"

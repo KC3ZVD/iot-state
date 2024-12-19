@@ -1,24 +1,33 @@
 [version]
 path = "src/kc3zvd/iot_state/__about__.py"
 
-[envs.types]
-extra-dependencies = [
-  "mypy>=1.0.0",
-]
-
 [build.targets.wheel]
 sources = ["src"]
 packages = ["src/kc3zvd"]
 
-[envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/kc3zvd/iot_state tests}"
+[envs.default]
+dependencies = [
+  "git-changelog"
+]
 
 [envs.default.scripts]
+bump-version = "python build/bump_version.py"
 worker = "celery -A kc3zvd.iot_state.workers.wled worker"
 listener = "python -m kc3zvd.iot_state.listeners.wled"
 
 [envs.dev]
 
+[envs.dev.scripts]
+checks = "hatch test --cover && hatch fmt"
+
 [envs.dev.env-vars]
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 MONGODB_URL = 'mongodb://localhost/iot'
+
+[envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+
+[envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/kc3zvd/iot_state tests}"
