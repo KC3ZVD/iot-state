@@ -19,6 +19,9 @@ listener = "python -m kc3zvd.iot_state.listeners.wled"
 
 [envs.dev]
 
+[envs.dev.scripts]
+checks = "hatch test --cover && hatch fmt"
+
 [envs.dev.env-vars]
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 MONGODB_URL = 'mongodb://localhost/iot'

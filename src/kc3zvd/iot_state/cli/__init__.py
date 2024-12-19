@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 import click
-
 from kc3zvd.iot_state.__about__ import __version__
 
 

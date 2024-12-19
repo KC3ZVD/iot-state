@@ -1,2 +1,2 @@
-def normalize(input: str) -> str:
-  return input.lower().replace(' ', '_')
+def normalize(content: str) -> str:
+    return content.lower().replace(" ", "_")
