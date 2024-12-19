@@ -3,7 +3,7 @@ name: build
 on:
   workflow_run:
     workflows: ["test"]
-    branches: [main]
+    branches: [ci]
     types: 
       - completed
 
