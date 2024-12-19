@@ -9,14 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: bump-version
-        run: echo "NEW_VERSION=`hatch run ci:bump-version`" >> "$GITHUB_OUTPUT"
+        run: echo "version=`hatch run ci:bump-version`" >> "$GITHUB_OUTPUT"
     outputs:
-      new-version: ${{ steps.bump-version.outputs.NEW_VERSION }}
+      version: ${{ steps.bump-version.outputs.version }}
   verify:
     runs-on: ubuntu-latest
     needs: version
     steps:
       - env:
-          NEW_VERSION: ${{ needs.version.outputs.new-version }}
+          NEW_VERSION: ${{ needs.version.outputs.version }}
         run: env
         
