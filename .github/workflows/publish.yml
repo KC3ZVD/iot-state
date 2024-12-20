@@ -14,6 +14,13 @@ jobs:
       with:
         name: python-package-distributions
         path: dist/
+    - name: Create changelog
+      run: hatch run generate-changelog
+    - name: Store Changelog
+      uses: actions/upload-artifact@v4
+      with:
+        name: changelog
+        path: CHANGEELOG.md
   github-release:
     name: >-
       Sign the Python 🐍 distribution 📦 with Sigstore

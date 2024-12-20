@@ -26,13 +26,6 @@ jobs:
       - id: version
         name: Store version number for future jobs
         run: echo "version=`hatch version`" >> "$GITHUB_OUTPUT"
-      - name: Create changelog
-        run: hatch run generate-changelog
-      - name: Commit Changelog and Version file
-        uses: devops-infra/action-commit-push@master
-        with:
-          github_token: ${{ github.token }}
-          commit_prefix: "docs(changelog): Update changelog"
   create-release:
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.event.head_commit.message, 'docs(changelog)') }}
