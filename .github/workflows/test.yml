@@ -5,6 +5,7 @@ on:
     types:
       - opened
       - synchronize
+  workflow_dispatch:
 
 concurrency:
   group: test-${{ github.head_ref }}
