@@ -27,6 +27,8 @@ jobs:
         run: echo "version=`hatch version`" >> "$GITHUB_OUTPUT"
   create-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     needs:
     - version
     steps:
