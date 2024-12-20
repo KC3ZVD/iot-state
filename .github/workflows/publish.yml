@@ -5,91 +5,21 @@ on:
     types: [published]
 
 jobs:
-  build-package:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - name: Set up environment
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.x"
-        cache: 'pip'
-    - name: Install Hatch
-      run: pip install hatch
-    - name: Determine Version
-      run: hatch version `hatch run bump-version`
-    - name: Build Package
-      run: hatch build
-    - name: Store build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: python-package-distributions
-        path: dist/
-    - name: Create changelog
-      run: hatch run generate-changelog
-    - name: Store Changelog
-      uses: actions/upload-artifact@v4
-      with:
-        name: changelog
-        path: CHANGEELOG.md
+  
   github-release:
-    name: >-
-      Sign the Python 🐍 distribution 📦 with Sigstore
-      and upload them to GitHub Release
-    needs:
-    - build-package
+    name: Upload Packages to pypi
     runs-on: ubuntu-latest
-
     permissions:
-      contents: write  # IMPORTANT: mandatory for making GitHub Releases
       id-token: write  # IMPORTANT: mandatory for sigstore
-
-    steps:
-    - name: Download all the dists
-      uses: actions/download-artifact@v4
-      with:
-        name: python-package-distributions
-        path: dist/
-    - name: Download the changelog
-      uses: actions/download-artifact@v4
-      with:
-        name: changelog
-    - name: Sign the dists with Sigstore
-      uses: sigstore/gh-action-sigstore-python@v3.0.0
-      with:
-        inputs: >-
-          ./dist/*.tar.gz
-          ./dist/*.whl
-          ./CHANGELOG.md
-    - name: Upload artifact signatures to GitHub Release
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      # Upload to GitHub Release using the `gh` CLI.
-      # `dist/` contains the built packages, and the
-      # sigstore-produced signatures and certificates.
-      run: >-
-        gh release upload ${{ github.event.release.name }} dist/**
-        --repo '${{ github.repository }}' &&
-        gh release upload ${{ github.event.release.name }} CHANGELOG.md
-        --repo '${{ github.repository }}' &&
-        gh release edit ${{ github.event.release.name }} --notes-file CHANGELOG.md
-  publish-to-pypi:
-    name: Publish packages to PyPi
-    needs:
-    - build-package
-    runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/<package-name>
-    permissions:
-      id-token: write
+      url: https://pypi.org/p/kc3zvd-iot-state
     steps:
-    - name: Download all the dists
-      uses: actions/download-artifact@v4
-      with:
-        name: python-package-distributions
-        path: dist/
-    - name: Publish distribution 📦 to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Download all the dists
+        uses: robinraju/release-downloader@v1
+        with:
+          out-file-path: dist/
+          extract: true
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        
