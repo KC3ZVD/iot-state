@@ -61,9 +61,8 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: changelog
-        path: CHANGELOG.md
-    - name: DEBUG Changelog
-      run: cat ./CHANGELOG.md
+    - name: DEBUG artifacts
+      run: ls -R
     - name: Sign the dists with Sigstore
       uses: sigstore/gh-action-sigstore-python@v3.0.0
       with:
