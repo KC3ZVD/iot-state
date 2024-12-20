@@ -20,6 +20,7 @@ jobs:
         with:
           out-file-path: dist/
           extract: true
+          releaseId: ${{ github.event.release.id }}
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         
