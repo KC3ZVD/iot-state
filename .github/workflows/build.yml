@@ -7,7 +7,7 @@ on:
 jobs:
   version:
     runs-on: ubuntu-latest
-    if: "notcontains(github.event.head_commit.message, 'docs(changelog)')"
+    if: ${{ ! startsWith(github.event.head_commit.message, 'docs(changelog)') }}
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
@@ -35,7 +35,7 @@ jobs:
           commit_prefix: "docs(changelog): Update changelog"
   create-release:
     runs-on: ubuntu-latest
-    if: "contains(github.event.head_commit.message, 'docs(changelog)')"
+    if: ${{ startsWith(github.event.head_commit.message, 'docs(changelog)') }}
     needs:
     - version
     steps:
