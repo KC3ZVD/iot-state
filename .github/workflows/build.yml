@@ -7,6 +7,8 @@ on:
 jobs:
   build-package:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,6 +22,9 @@ jobs:
         run: pip install hatch
       - name: Determine Version
         run: hatch version `hatch run bump-version`
+      - id: version
+        name: Store version number for future jobs
+        run: echo "version=`hatch version`" >> "$GITHUB_OUTPUT"
       - name: Create changelog
         run: hatch run generate-changelog
       - name: Store changelog artifact
@@ -34,32 +39,12 @@ jobs:
         with:
           name: python-package-distributions
           path: dist/
-  publish-to-pypi:
-    name: Publish packages to PyPi
-    if: startsWith(github.ref, 'refs/tags/')
-    needs:
-    - build-package
-    runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/p/<package-name>
-    permissions:
-      id-token: write
-    steps:
-    - name: Download all the dists
-      uses: actions/download-artifact@v4
-      with:
-        name: python-package-distributions
-        path: dist/
-    - name: Publish distribution 📦 to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
   github-release:
-    if: startsWith(github.ref, 'refs/tags/')
     name: >-
       Sign the Python 🐍 distribution 📦 with Sigstore
       and upload them to GitHub Release
     needs:
-    - publish-to-pypi
+    - build-package
     runs-on: ubuntu-latest
 
     permissions:
@@ -83,12 +68,13 @@ jobs:
         inputs: >-
           ./dist/*.tar.gz
           ./dist/*.whl
+          ./CHANGELOG.md
     - name: Create GitHub Release
       env:
         GITHUB_TOKEN: ${{ github.token }}
+        VERSION: ${{ needs.build-package.outputs.version }}
       run: >-
-        gh release create
-        '${{ github.ref_name }}'
+        gh release create $VERSION
         --repo '${{ github.repository }}'
         --notes ""
     - name: Upload artifact signatures to GitHub Release
@@ -98,10 +84,7 @@ jobs:
       # `dist/` contains the built packages, and the
       # sigstore-produced signatures and certificates.
       run: >-
-        gh release upload
-        '${{ github.ref_name }}' dist/**
+        gh release upload $VERSION dist/**
         --repo '${{ github.repository }}' &&
-        gh release upload
-        '${{ github.ref_name }}' CHANGELOG.md
+        gh release upload $VERSION CHANGELOG.md
         --repo '${{ github.repository }}'
-
