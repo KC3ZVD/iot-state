@@ -1,0 +1,29 @@
+name: Publish Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  
+  github-release:
+    name: Upload Packages to pypi
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/p/kc3zvd-iot-state
+    steps:
+      - name: Download all the dists
+        id: release-downloader
+        uses: robinraju/release-downloader@v1
+        with:
+          out-file-path: dist
+          releaseId: ${{ github.event.release.id }}
+          fileName: '*'
+      - name: Remove sigstore signatures
+        run: rm dist/*.sigstore.json
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        
