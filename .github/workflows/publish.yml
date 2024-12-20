@@ -21,11 +21,9 @@ jobs:
         with:
           out-file-path: dist
           releaseId: ${{ github.event.release.id }}
-          fileName: '*'
-      - name: DEBUG - Check downloaded files
-        run: ls -R
-      - name: DEBUG - release-downloader reported files
-        run: echo  ${{ fromJson(steps.release-downloader.outputs.downloaded_files)[0] }}
+          fileName: '*.'
+      - name: Remove sigstore signatures
+        run: rm dist/*.sigstore.json
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         
