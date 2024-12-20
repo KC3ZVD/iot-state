@@ -1,15 +1,11 @@
 name: test
 
 on:
-  # pull_request:
-  #   types:
-  #     - opened
-  #     - edited
-  #     - synchronize
-  release:
+  pull_request:
     types:
-      - created
-      - edited
+      - opened
+      - synchronize
+  workflow_dispatch:
 
 concurrency:
   group: test-${{ github.head_ref }}

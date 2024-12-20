@@ -72,6 +72,7 @@ jobs:
           --repo '${{ github.repository }}'
           --notes-file CHANGELOG.md
           --title 'Release ${{ needs.build-package.outputs.version }}'
+          --draft
       - name: Upload artifact signatures to GitHub Release
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -79,5 +80,5 @@ jobs:
         # `dist/` contains the built packages, and the
         # sigstore-produced signatures and certificates.
         run: >-
-          gh release upload ${{ needs.build-package.outputs.version }} dist/**
+          gh release upload ${{ needs.build-package.outputs.version }} dist/*.sigstore
           --repo '${{ github.repository }}'
