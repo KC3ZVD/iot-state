@@ -20,7 +20,6 @@ jobs:
         uses: robinraju/release-downloader@v1
         with:
           out-file-path: dist
-          extract: true
           releaseId: ${{ github.event.release.id }}
           fileName: '*'
       - name: DEBUG - Check downloaded files
