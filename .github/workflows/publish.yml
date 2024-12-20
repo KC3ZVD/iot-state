@@ -21,6 +21,8 @@ jobs:
           out-file-path: dist/
           extract: true
           releaseId: ${{ github.event.release.id }}
+      - name: DEBUG - Check downloaded files
+        run: ls -R
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         
