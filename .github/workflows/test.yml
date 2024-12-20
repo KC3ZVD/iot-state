@@ -1,7 +1,14 @@
 name: test
 
 on:
-  pull_request
+  pull_request:
+    types:
+      - opened
+      - edited
+  release:
+    types:
+      - created
+      - edited
 
 concurrency:
   group: test-${{ github.head_ref }}
