@@ -8,6 +8,18 @@ jobs:
   build-package:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Set up environment
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.x"
+        cache: 'pip'
+    - name: Install Hatch
+      run: pip install hatch
+    - name: Determine Version
+      run: hatch version `hatch run bump-version`
     - name: Build Package
       run: hatch build
     - name: Store build artifacts
