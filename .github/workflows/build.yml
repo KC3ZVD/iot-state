@@ -2,11 +2,12 @@ name: build
 
 on:
   push:
-    branches: [ci]
+    branches: [main]
 
 jobs:
-  build-package:
+  version:
     runs-on: ubuntu-latest
+    if: "notcontains(github.event.head_commit.message, 'docs(changelog)')"
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
@@ -27,65 +28,22 @@ jobs:
         run: echo "version=`hatch version`" >> "$GITHUB_OUTPUT"
       - name: Create changelog
         run: hatch run generate-changelog
-      - name: Store changelog artifact
-        uses: actions/upload-artifact@v4
+      - name: Commit Changelog and Version file
+        uses: devops-infra/action-commit-push@master
         with:
-          name: changelog
-          path: CHANGELOG.md
-      - name: Build Package
-        run: hatch build
-      - name: Store build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: python-package-distributions
-          path: dist/
-  github-release:
-    name: >-
-      Sign the Python 🐍 distribution 📦 with Sigstore
-      and upload them to GitHub Release
-    needs:
-    - build-package
+          github_token: ${{ github.token }}
+          commit_prefix: "docs(changelog): Update changelog"
+  create-release:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write  # IMPORTANT: mandatory for making GitHub Releases
-      id-token: write  # IMPORTANT: mandatory for sigstore
-
+    if: "contains(github.event.head_commit.message, 'docs(changelog)')"
+    needs:
+    - version
     steps:
-    - name: Download all the dists
-      uses: actions/download-artifact@v4
-      with:
-        name: python-package-distributions
-        path: dist/
-    - name: Download the changelog
-      uses: actions/download-artifact@v4
-      with:
-        name: changelog
-    - name: DEBUG artifacts
-      run: ls -R
-    - name: Sign the dists with Sigstore
-      uses: sigstore/gh-action-sigstore-python@v3.0.0
-      with:
-        inputs: >-
-          ./dist/*.tar.gz
-          ./dist/*.whl
-          ./CHANGELOG.md
-    - name: Create GitHub Release
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-        VERSION: ${{ needs.build-package.outputs.version }}
-      run: >-
-        gh release create $VERSION
-        --repo '${{ github.repository }}'
-        --notes ""
-    - name: Upload artifact signatures to GitHub Release
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      # Upload to GitHub Release using the `gh` CLI.
-      # `dist/` contains the built packages, and the
-      # sigstore-produced signatures and certificates.
-      run: >-
-        gh release upload $VERSION dist/**
-        --repo '${{ github.repository }}' &&
-        gh release upload $VERSION CHANGELOG.md
-        --repo '${{ github.repository }}'
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.version.outputs.version }}
+        run: >-
+          gh release create $VERSION
+          --repo '${{ github.repository }}'
+          --notes ""
