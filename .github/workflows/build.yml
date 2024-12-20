@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   build-package:
     if: ${{ startsWith(github.event.head_commit.message, 'release:') }}
@@ -43,8 +46,6 @@ jobs:
   create-release:
     if: ${{ startsWith(github.event.head_commit.message, 'release:') }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     needs:
     - build-package
     steps:
