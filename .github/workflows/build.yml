@@ -5,8 +5,8 @@ on:
     branches: [main]
 
 jobs:
-  version:
-    if: ${{ startsWith(github.event.head_commit.message, 'build(package):') }}
+  build-package:
+    if: ${{ startsWith(github.event.head_commit.message, 'release:') }}
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -26,19 +26,58 @@ jobs:
       - id: version
         name: Store version number for future jobs
         run: echo "version=`hatch version`" >> "$GITHUB_OUTPUT"
+      - name: Build Package
+        run: hatch build
+      - name: Store build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Create changelog
+        run: hatch run generate-changelog
+      - name: Store Changelog
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog
+          path: CHANGELOG.md
   create-release:
-    if: ${{ startsWith(github.event.head_commit.message, 'build(package):') }}
+    if: ${{ startsWith(github.event.head_commit.message, 'release:') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
     needs:
-    - version
+    - build-package
     steps:
+      - name: Download all the dists
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+      - name: Download the changelog
+        uses: actions/download-artifact@v4
+        with:
+          name: changelog
+      - name: Sign the dists with Sigstore
+        uses: sigstore/gh-action-sigstore-python@v3.0.0
+        with:
+          inputs: >-
+            ./dist/*.tar.gz
+            ./dist/*.whl
+            ./CHANGELOG.md
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: >-
-          gh release create ${{ needs.version.outputs.version }}
+          gh release create ${{ needs.build-package.outputs.version }}
           --repo '${{ github.repository }}'
-          --draft
-          --title 'Release ${{ needs.version.outputs.version }}'
+          --notes-file CHANGELOG.md
+          --title 'Release ${{ needs.build-package.outputs.version }}'
+      - name: Upload artifact signatures to GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        # Upload to GitHub Release using the `gh` CLI.
+        # `dist/` contains the built packages, and the
+        # sigstore-produced signatures and certificates.
+        run: >-
+          gh release upload ${{ needs.build-package.outputs.version }} dist/**
+          --repo '${{ github.repository }}'
