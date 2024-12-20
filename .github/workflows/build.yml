@@ -1,0 +1,49 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    if: "notcontains(github.event.head_commit.message, 'docs(changelog)')"
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+          cache: 'pip'
+      - name: Install Hatch
+        run: pip install hatch
+      - name: Determine Version
+        run: hatch version `hatch run bump-version`
+      - id: version
+        name: Store version number for future jobs
+        run: echo "version=`hatch version`" >> "$GITHUB_OUTPUT"
+      - name: Create changelog
+        run: hatch run generate-changelog
+      - name: Commit Changelog and Version file
+        uses: devops-infra/action-commit-push@master
+        with:
+          github_token: ${{ github.token }}
+          commit_prefix: "docs(changelog): Update changelog"
+  create-release:
+    runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, 'docs(changelog)')"
+    needs:
+    - version
+    steps:
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.version.outputs.version }}
+        run: >-
+          gh release create $VERSION
+          --repo '${{ github.repository }}'
+          --notes ""

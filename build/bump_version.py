@@ -4,7 +4,7 @@ from git_changelog import build, versioning  # noqa
 changes = build.Changelog(
     repository=".",
     convention="angular",
-    provider="gitlab",
+    provider="github",
     parse_trailers=True,
     sections=("build", "deps", "feat", "fix", "refactor"),
     versioning="semver",
