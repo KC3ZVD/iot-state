@@ -21,7 +21,7 @@ jobs:
         with:
           out-file-path: dist
           releaseId: ${{ github.event.release.id }}
-          fileName: '*.'
+          fileName: '*'
       - name: Remove sigstore signatures
         run: rm dist/*.sigstore.json
       - name: Publish distribution 📦 to PyPI
