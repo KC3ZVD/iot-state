@@ -64,7 +64,6 @@ jobs:
           inputs: >-
             ./dist/*.tar.gz
             ./dist/*.whl
-            ./CHANGELOG.md
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ github.token }}
