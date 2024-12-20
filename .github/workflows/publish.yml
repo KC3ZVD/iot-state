@@ -10,7 +10,7 @@ jobs:
     name: Upload Packages to pypi
     runs-on: ubuntu-latest
     permissions:
-      id-token: write  # IMPORTANT: mandatory for sigstore
+      id-token: write
     environment:
       name: pypi
       url: https://pypi.org/p/kc3zvd-iot-state
