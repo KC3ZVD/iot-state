@@ -6,6 +6,7 @@ on:
 
 jobs:
   version:
+    if: ${{ startsWith(github.event.head_commit.message, 'build(package):') }}
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -26,6 +27,7 @@ jobs:
         name: Store version number for future jobs
         run: echo "version=`hatch version`" >> "$GITHUB_OUTPUT"
   create-release:
+    if: ${{ startsWith(github.event.head_commit.message, 'build(package):') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -35,8 +37,8 @@ jobs:
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          VERSION: ${{ needs.version.outputs.version }}
         run: >-
-          gh release create $VERSION
+          gh release create ${{ needs.version.outputs.version }}
           --repo '${{ github.repository }}'
-          --notes ""
+          --draft
+          --title 'Release ${{ needs.version.outputs.version }}'

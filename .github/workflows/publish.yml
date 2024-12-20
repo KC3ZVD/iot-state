@@ -1,7 +1,8 @@
 name: Publish Release
 
 on:
-  release
+  release:
+    types: [published]
 
 jobs:
   build-package:
@@ -60,7 +61,8 @@ jobs:
         gh release upload ${{ github.event.release.name }} dist/**
         --repo '${{ github.repository }}' &&
         gh release upload ${{ github.event.release.name }} CHANGELOG.md
-        --repo '${{ github.repository }}'
+        --repo '${{ github.repository }}' &&
+        gh release edit ${{ github.event.release.name }} --notes-file CHANGELOG.md
   publish-to-pypi:
     name: Publish packages to PyPi
     needs:
