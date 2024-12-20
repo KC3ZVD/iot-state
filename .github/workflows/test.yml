@@ -1,11 +1,17 @@
-name: test
+name: Execute Tests
 
 on:
   pull_request:
     types:
       - opened
       - synchronize
+    paths:
+      - src/**
+      - tests/**
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: test-${{ github.head_ref }}
@@ -24,7 +30,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
-
     steps:
     - uses: actions/checkout@v3
 
