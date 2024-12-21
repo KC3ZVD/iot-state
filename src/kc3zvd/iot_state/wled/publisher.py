@@ -1,7 +1,8 @@
-from dataclasses import dataclass
-import paho.mqtt.publish as publish
 import json
 import os
+from dataclasses import dataclass
+
+from paho.mqtt import publish
 
 APP_MQTT_HOST = os.getenv("APP_MQTT_HOST")
 APP_MQTT_PORT = os.getenv("APP_MQTT_PORT", 1883)
@@ -41,19 +42,19 @@ class MQTTPublisher:
 
     def __post_init__(self):
         print('Publisher init complete.')
-    
-    def publish(self, payload, topic, qos=1): 
+
+    def publish(self, payload, topic, qos=1):
         auth = None
         if self.user:
             auth = {
                 "username": self.user,
-                "password": self.password 
+                "password": self.password
             }
         publish.single(
-            topic=topic, 
-            payload=payload, 
+            topic=topic,
+            payload=payload,
             qos=qos,
-            hostname=self.host, 
+            hostname=self.host,
             port=self.port,
             auth=auth
             )

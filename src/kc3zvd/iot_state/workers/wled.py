@@ -1,11 +1,11 @@
 import logging
+import os
+
 import requests
 from celery import Celery
-import os
+from mongoengine import DoesNotExist, MultipleObjectsReturned, connect
+
 from iot_state.devices import Device
-from mongoengine import connect, MultipleObjectsReturned, DoesNotExist
-
-
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_BACKEND_URL = os.getenv("CELERY_BACKEND_URL")
@@ -21,7 +21,7 @@ logger.setLevel(level=CELERY_LOG_LEVEL)
 
 @app.task
 def discover(details: dict) -> None:
-  
+
   for address in details['attributes']['addresses']:
     url = "http://%s/json/info" % address
     try:
@@ -55,7 +55,7 @@ def process_discovered_device(details: dict, state: dict) -> None:
   except DoesNotExist:
     logger.info("Existing device not found, proceeding to bootstrap state")
     device = Device(
-      platform_id=device_id, 
+      platform_id=device_id,
       platform=details['platform'],
       discovery_source=details['source'])
     device = device.save()

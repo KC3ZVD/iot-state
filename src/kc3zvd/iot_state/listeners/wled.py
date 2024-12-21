@@ -1,16 +1,19 @@
-from zeroconf import ServiceStateChange, Zeroconf
-from typing import Optional, cast
-from iot_state.workers import wled
-import logging
-import asyncio
-import sys
-import os
+from __future__ import annotations
 
+import asyncio
+import logging
+import os
+import sys
+from typing import cast
+
+from zeroconf import ServiceStateChange, Zeroconf
 from zeroconf.asyncio import (
     AsyncServiceBrowser,
     AsyncServiceInfo,
     AsyncZeroconf,
 )
+
+from iot_state.workers import wled
 
 _PENDING_TASKS: set[asyncio.Task] = set()
 _WLED_SUPPORT = "0.15.0"
@@ -25,10 +28,10 @@ def async_on_service_state_change(
     zeroconf: Zeroconf, service_type: str, name: str, state_change: ServiceStateChange
 ) -> None:
     if not name.startswith('wled'):
-      logger.debug(f"Service {name} does not appear to be a WLED service, skipping...")
+      logger.debug("Service does not appear to be a WLED service, skipping...")
       return
     if state_change is not ServiceStateChange.Added:
-      logger.debug(f"State Change: {state_change}")
+      logger.debug("State change detected")
       return
     task = asyncio.ensure_future(async_publish_service_info(zeroconf, service_type, name))
     _PENDING_TASKS.add(task)
@@ -38,11 +41,10 @@ def async_on_service_state_change(
 async def async_publish_service_info(zeroconf: Zeroconf, service_type: str, name: str) -> None:
     info = AsyncServiceInfo(service_type, name)
     await info.async_request(zeroconf, 3000)
-    logger.debug("Info from zeroconf.get_service_info: %r" % (info))
     if info:
         addresses = ["%s:%d" % (addr, cast(int, info.port)) for addr in info.parsed_scoped_addresses()]
 
-      
+
         details = {
           "source": 'mdns',
           "platform": 'wled',
@@ -53,22 +55,22 @@ async def async_publish_service_info(zeroconf: Zeroconf, service_type: str, name
 
         wled.discover.delay(details=details)
 
-        logger.info(f"Adding service {name} to MQTT")
+        logger.info("Adding service to MQTT")
     else:
-        logger.warning("No service info available for %s, skipping..." % (name))
+        logger.warning("No service info available, skipping...")
 
 class AsyncRunner:
     def __init__(self) -> None:
-        self.aiobrowser: Optional[AsyncServiceBrowser] = None
-        self.aiozc: Optional[AsyncZeroconf] = None
+        self.aiobrowser: AsyncServiceBrowser|None=None
+        self.aiozc: AsyncZeroconf|None=None
 
     async def async_run(self) -> None:
         self.aiozc = AsyncZeroconf()
 
         services = ["_http._tcp.local."]
-        logger.debug("Watching for %s service(s)" % services)
+        logger.debug("Watching for service(s)")
         logger.info("Monitoring mDNS...")
-        
+
         self.aiobrowser = AsyncServiceBrowser(
             self.aiozc.zeroconf, services, handlers=[async_on_service_state_change]
         )
@@ -76,8 +78,6 @@ class AsyncRunner:
             await asyncio.sleep(1)
 
     async def async_close(self) -> None:
-        assert self.aiozc is not None
-        assert self.aiobrowser is not None
         await self.aiobrowser.async_cancel()
         await self.aiozc.async_close()
 
