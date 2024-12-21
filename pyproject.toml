@@ -31,7 +31,8 @@ dependencies = [
   "requests",
   "semver",
   "Celery[redis]",
-  "mongoengine"
+  "mongoengine",
+  "redis"
 ]
 
 [project.urls]
