@@ -3,8 +3,3 @@ release:
   - changed-files:
     - any-glob-to-any-file: 'src/**/*'
     - all-globs-to-all-files: '!src/docs/*'
-
-release:
-- any:
-  - changed-files:
-    - any-glob-to-any-file: 'tests/**/*'
