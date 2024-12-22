@@ -1,0 +1,62 @@
+site_name: "IOT State"
+
+plugins:
+- search
+- gen-files:
+    scripts:
+      - docs/generate.py
+- mkdocstrings:
+    handlers:
+      python:
+        paths:
+        - src/*
+        options:
+          merge_init_into_class: true
+          parameter_headings: false
+          show_labels: true
+          show_source: true
+          show_bases: false
+          show_root_heading: true
+          show_root_toc_entry: true
+          show_symbol_type_heading: true
+          show_symbol_type_toc: true
+          summary: true
+          show_signatures: false
+          docstring_options:
+            show_docstrings_attributes: true
+            ignore_init_summary: true
+theme:
+  features:
+  - announce.dismiss
+  - content.action.edit
+  - content.action.view
+  - content.code.annotate
+  - content.code.copy
+  - content.tooltips
+  - navigation.footer
+  - navigation.sections
+  - navigation.top
+  - navigation.tabs
+  - navigation.tabs.sticky
+  - search.highlight
+  - search.suggest
+  - toc.follow
+  font:
+    code: Fira Mono
+    text: Inter
+  name: material
+  palette:
+  - media: (prefers-color-scheme)
+    toggle:
+      icon: material/brightness-auto
+      name: Switch to light mode
+  - media: '(prefers-color-scheme: light)'
+    scheme: appsec-light
+    toggle:
+      icon: material/brightness-7
+      name: Switch to dark mode
+  - media: '(prefers-color-scheme: dark)'
+    scheme: appsec-dark
+    toggle:
+      icon: material/brightness-4
+      name: Switch to system preference

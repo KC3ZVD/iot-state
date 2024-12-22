@@ -25,6 +25,16 @@ checks = "hatch test --cover && hatch fmt"
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 MONGODB_URL = 'mongodb://localhost/iot'
 
+[envs.docs]
+extra-dependencies = [
+  "mkdocstrings[python]",
+  "mkdocs",
+  "mkdocs-material",
+  "mkdocs-gen-files"
+]
+[envs.docs.scripts]
+serve = "mkdocs -v serve -f mkdocs.yml -a 0.0.0.0:8000"
+
 [envs.types]
 extra-dependencies = [
   "mypy>=1.0.0",
