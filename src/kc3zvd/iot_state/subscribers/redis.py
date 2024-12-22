@@ -4,7 +4,7 @@ import asyncio
 STOPWORD = "STOP"
 
 
-async def subscribe(channel: str, callback: Callable[[], None]):
+async def subscribe(channel: str, callback: Callable[[], None], redis_host: int, redis_port: int, redis_db: int):
     print(f"Subscribing to channel: {channel}")
     client = redis.Redis()
 

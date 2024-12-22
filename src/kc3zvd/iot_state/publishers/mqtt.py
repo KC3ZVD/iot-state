@@ -8,7 +8,8 @@ async def reader(channel: redis.client.PubSub):
         message = await channel.get_message(ignore_subscribe_messages=True)
         if message is not None:
             print(f"(Reader) Message Received: {message}")
-def subscribe():
-    asyncio.run(redis.subscribe('publish', reader))
+
+def run(redis_host: str = 'localhost', redis_port: int = 6379, redis_db: int = 0):
+    asyncio.run(redis.subscribe('publish', reader, redis_host, redis_port, redis_db))
 
 
