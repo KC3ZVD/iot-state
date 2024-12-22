@@ -30,17 +30,22 @@ def iot_state(ctx, redis_username, redis_password, redis_host, redis_port, redis
               type=click.Choice(['mqtt'], case_sensitive=False))
 @click.option('--mqtt-host', help="The MQTT host to connect to", default='localhost', type=str)
 @click.option('--mqtt-port', help="The port to use to connect to the MQTT host", default=1883, type=int)
+@click.option('--mqtt-prefix', help="The prefix to use for the MQTT topic", default='', type=str)
 @click.pass_context
-def publisher(ctx, platform, mqtt_host, mqtt_port):
+def publisher(ctx, platform, mqtt_host, mqtt_port, mqtt_prefix):
     mqtt_url = ""
     match platform:
         case 'mqtt':
             click.echo("mqtt platform selected")
+            if mqtt_prefix:
+                if mqtt_prefix[-1] != '/':
+                    mqtt_prefix = f"{mqtt_prefix}/"
             mqtt.run(
                 redis_url=ctx.obj['redis_url'],
                 publisher={
                     "mqtt_host": mqtt_host,
-                    "mqtt_port": mqtt_port
+                    "mqtt_port": mqtt_port,
+                    "mqtt_prefix": mqtt_prefix
                 }
             )
         case _:

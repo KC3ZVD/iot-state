@@ -5,11 +5,6 @@ import asyncio
 import json
 
 # prefix/device_type/area_name/device_name/state_class
-class MQTTPublisher:
-
-    def __init__(self, host, port):
-        self.host = host
-        self.port = port
 
 async def handle_messages(channel: redis.client.PubSub, publisher: str):
     publisher = json.loads(publisher)
@@ -21,7 +16,10 @@ async def handle_messages(channel: redis.client.PubSub, publisher: str):
         message = await channel.get_message(ignore_subscribe_messages=True)
         if message is not None:
             print(f"(Reader) Message Received: {message}")
-            mqttc.publish(topic="test/message", payload=message['data']).wait_for_publish()
+            payload = message['data']
+            topic = f"{publisher['mqtt_prefix']}device_type/area_name/device_name/state_class"
+            print(f"Sending message to topic {topic}: {payload}")
+            mqttc.publish(topic=topic, payload=payload).wait_for_publish()
     mqttc.disconnect()
     mqttc.loop_stop()
 
