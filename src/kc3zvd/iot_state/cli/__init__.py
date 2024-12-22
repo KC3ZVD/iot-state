@@ -16,7 +16,7 @@ def iot_state(ctx, redis_host, redis_port, redis_db):
   ctx.obj['redis_host'] = redis_host
   ctx.obj['redis_port'] = redis_port
   ctx.obj['redis_db'] = redis_db
-
+  click.echo("Starting IOT state platform")
 @iot_state.command()
 @click.option('--platform', help="The platform to publish to", required=True, 
               type=click.Choice(['mqtt'], case_sensitive=False))
@@ -24,7 +24,11 @@ def iot_state(ctx, redis_host, redis_port, redis_db):
 def publisher(ctx, platform):
   match platform:
     case 'mqtt':
-      mqtt.subscribe(redis_host=ctx.obj['redis_host'], redis_port=ctx.obj['redis_port'], redis_db=ctx.obj['redis_db'])
+      #publishers.mqtt.subscribe(
+      #  redis_host=ctx.obj['redis_host'],
+      #  redis_port=ctx.obj['redis_port'],
+      #  redis_db=ctx.obj['redis_db'])
+      mqtt.subscribe()      
       click.echo("mqtt platform selected")
     case _:
       die()
