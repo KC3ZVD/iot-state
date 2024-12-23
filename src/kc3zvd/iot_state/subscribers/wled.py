@@ -76,12 +76,7 @@ class AsyncRunner:
 
 def listen() -> None:
     # Set up logging
-    logger.setLevel(level=logging.DEBUG)
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(level=logging.DEBUG)
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    
 
     # set up event loop
     loop = asyncio.get_event_loop()
