@@ -9,7 +9,7 @@ import logging
 import sys
 
 
-logger = logging.getLogger()
+logger = logging.getLogger('kc3zvd.iot_state')
 handler = logging.StreamHandler(sys.stdout)
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
