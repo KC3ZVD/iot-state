@@ -16,6 +16,15 @@
 pip install kc3zvd-iot-state
 ```
 
+## Message Formats
+### device:state:{update,create}
+```json
+{
+  "state": {},    // The State() object
+  "device": {}    // The Device() object
+}
+```
+
 ## License
 
 `iot-state` is distributed under the terms of the [MIT](https://spdx.org/licenses/MIT.html) license.
