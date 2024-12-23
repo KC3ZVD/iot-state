@@ -32,4 +32,3 @@ async def subscribe(redis_url: str, publisher: str):
 def run(redis_url: str, publisher: dict):
     asyncio.run(subscribe(redis_url, json.dumps(publisher)))
 
-
