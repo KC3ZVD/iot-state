@@ -4,20 +4,22 @@ import paho.mqtt.client as mqtt
 import asyncio
 import json
 import click
+import logging
+logger = logging.getLogger(__name__)
 # prefix/device_type/area_name/device_name/state_class
 
 async def handle_state_messages(channel: redis.client.PubSub):
 
-    c = click.get_current_context()
-    print(c.params)
+    ctx = click.get_current_context()
+    print(ctx.obj['mqtt'])
 
     mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
-    mqttc.connect(host=c.params['mqtt_host'], port=c.params['mqtt_port'])
+    mqttc.connect(host=ctx.obj['mqtt']['host'], port=ctx.obj['mqtt']['port'])
     mqttc.loop_start()
     while True:
         message = await channel.get_message(ignore_subscribe_messages=True)
         if message is not None:
-            print(f"(Reader) Message Received: {message}")
+            logger.info(f"(Reader) Message Received: {message}")
 
             payload = json.loads(message['data'].decode('utf-8'))
 
@@ -52,6 +54,7 @@ async def handle_notification_messages(channel: redis.client.PubSub):
     pass
 
 async def subscribe(redis_url: str):
+    logger.debug('Creating event queue subscribers...')
     update = asyncio.create_task(redis.subscribe('device:state:update', handle_state_messages, redis_url))
     create = asyncio.create_task(redis.subscribe('device:state:create', handle_state_messages, redis_url))
     p_all = asyncio.create_task(redis.subscribe('notification:all', handle_notification_messages, redis_url))
@@ -74,6 +77,6 @@ def run(redis_url: str):
         redis_url: The connection string to the redis instance in URL form
         publisher: MQTT connection details
     """
-
+    logger.info("Starting iot-state service(s)...")
     asyncio.run(subscribe(redis_url))
 
