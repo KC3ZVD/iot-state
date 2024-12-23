@@ -30,7 +30,9 @@ extra-dependencies = [
   "mkdocstrings[python]",
   "mkdocs",
   "mkdocs-material",
-  "mkdocs-gen-files"
+  "mkdocs-gen-files",
+  "pymdown-extensions",
+  "markdown-include"
 ]
 [envs.docs.scripts]
 serve = "mkdocs -v serve -f mkdocs.yml -a 0.0.0.0:8000"
