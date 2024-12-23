@@ -19,7 +19,7 @@ def iot_state(ctx, redis_username, redis_password, redis_host, redis_port, redis
     if redis_username or redis_password:
         if not redis_username or not redis_password:
             click.echo("Provide both username and password for redis")
-            die()
+            exit()
         ctx.obj['redis_url'] = f"redis://{redis_username}:{redis_password}@{redis_host}:{redis_port}/{redis_db}"
     else:
         ctx.obj['redis_url'] = f"redis://{redis_host}:{redis_port}/{redis_db}"
@@ -33,20 +33,11 @@ def iot_state(ctx, redis_username, redis_password, redis_host, redis_port, redis
 @click.option('--mqtt-prefix', help="The prefix to use for the MQTT topic", default='', type=str)
 @click.pass_context
 def publisher(ctx, platform, mqtt_host, mqtt_port, mqtt_prefix):
-    mqtt_url = ""
     match platform:
         case 'mqtt':
             click.echo("mqtt platform selected")
-            if mqtt_prefix:
-                if mqtt_prefix[-1] != '/':
-                    mqtt_prefix = f"{mqtt_prefix}/"
             mqtt.run(
                 redis_url=ctx.obj['redis_url'],
-                publisher={
-                    "mqtt_host": mqtt_host,
-                    "mqtt_port": mqtt_port,
-                    "mqtt_prefix": mqtt_prefix
-                }
             )
         case _:
-            die()
+            exit()

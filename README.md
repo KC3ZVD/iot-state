@@ -20,7 +20,8 @@ pip install kc3zvd-iot-state
 ### device:state:{update,create}
 ```json
 {
-  "state": {}   // The State() object
+  "state": {},    // The State() object
+  "device": {}    // The Device() object
 }
 ```
 
